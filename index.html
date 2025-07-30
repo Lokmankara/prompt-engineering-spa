@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="tr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gelişmiş Komut Mühendisliği: Nobel Standardı</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals (#FDFBF6, #3C3633, #E0A75E, #7C9D96) -->
+    <!-- Application Structure Plan: A single-page dashboard design with a sticky nav. It starts with the core "Nobel Standard" concept, then uses a tabbed/card interface for the "Core Pillars" (Reasoning, Accuracy, etc.) to chunk information. Interactive charts replace static tables for comparing techniques, with click-to-view details. The final "Master Prompt" is presented as a blueprint with tooltips. This structure prioritizes guided exploration and interactivity over the report's linear, academic format, making complex information more digestible and engaging for the user. -->
+    <!-- Visualization & Content Choices: Report Table 1 (Reasoning Techs) -> Goal: Compare -> Viz: Interactive horizontal bar chart (Chart.js) -> Interaction: Click on a bar to display detailed info (description, pros, cons) in an adjacent text area. Justification: More engaging and space-efficient than a static table. Report Table 2 (Accuracy Techs) -> Same approach as Table 1. Report Section 7 (Master Prompt) -> Goal: Inform/Organize -> Viz: Styled HTML `<pre>` block -> Interaction: Hover tooltips on key terms. Justification: Presents the prompt as a practical, copyable artifact while providing contextual help. CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            background-color: #FDFBF6;
+            color: #3C3633;
+            font-family: 'Lato', sans-serif;
+        }
+        h1, h2, h3, h4 {
+            font-family: 'Merriweather', serif;
+            color: #3C3633;
+        }
+        .accent-color {
+            color: #E0A75E;
+        }
+        .accent-bg {
+            background-color: #E0A75E;
+        }
+        .secondary-color {
+            color: #7C9D96;
+        }
+        .secondary-bg {
+            background-color: #7C9D96;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 320px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            border-bottom: 1px dotted #E0A75E;
+        }
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 250px;
+            background-color: #3C3633;
+            color: #FDFBF6;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -125px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-family: 'Lato', sans-serif;
+            font-size: 0.875rem;
+        }
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="accent-bg text-white p-4 sticky top-0 z-50 shadow-md">
+        <nav class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl md:text-2xl font-bold text-white">Komut Mühendisliği Sanatı</h1>
+            <div class="hidden md:flex space-x-6">
+                <a href="#giris" class="hover:text-gray-200">Giriş</a>
+                <a href="#temel-ilkeler" class="hover:text-gray-200">Temel İlkeler</a>
+                <a href="#karsilastirma" class="hover:text-gray-200">Strateji Karşılaştırma</a>
+                <a href="#ana-komut" class="hover:text-gray-200">Ana Komut Yapısı</a>
+            </div>
+            <div class="md:hidden">
+                <select onchange="window.location.href=this.value" class="bg-transparent text-white border-none focus:ring-0">
+                    <option value="#giris">Giriş</option>
+                    <option value="#temel-ilkeler">Temel İlkeler</option>
+                    <option value="#karsilastirma">Karşılaştırma</option>
+                    <option value="#ana-komut">Ana Komut Yapısı</option>
+                </select>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto p-4 md:p-8">
+
+        <section id="giris" class="text-center my-12 md:my-16">
+            <h2 class="text-4xl md:text-5xl font-bold mb-4">"Nobel Jürisi" Standardında Çıktılar Üretmek</h2>
+            <p class="max-w-3xl mx-auto text-lg text-gray-700">
+                Büyük Dil Modelleri (BGM'ler) ile etkileşim kurarken, onlardan sadece bilgi değil, aynı zamanda derinlemesine analiz, bilimsel titizlik ve öz-eleştiri beklemek mümkündür. Bu interaktif rehber, BGM'lerden en yüksek kalitede, doğrulanabilir ve analitik yanıtlar almak için gereken ileri düzey komut mühendisliği stratejilerini ve ilkelerini araştırmaktadır.
+            </p>
+        </section>
+
+        <section id="temel-ilkeler" class="my-16 scroll-mt-20">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">Gelişmiş Komut Mühendisliğinin Temel İlkeleri</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="bg-white p-6 rounded-lg shadow-lg border-t-4 border-amber-400">
+                    <h3 class="text-2xl font-bold mb-3">Derin Muhakeme</h3>
+                    <p class="text-gray-600">
+                        Modellerin sadece cevap vermesini değil, cevaba nasıl ulaştıklarını adım adım göstermesini sağlamak. Düşünce Zinciri (CoT) gibi tekniklerle analitik derinlik artırılır.
+                    </p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg border-t-4 border-teal-500">
+                    <h3 class="text-2xl font-bold mb-3">Olgusal Doğruluk</h3>
+                    <p class="text-gray-600">
+                        Halüsinasyonları en aza indirmek ve %1'in altında hata payı hedefine ulaşmak. RAG gibi tekniklerle modelin harici ve güncel bilgilere dayanması sağlanır.
+                    </p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg border-t-4 border-slate-500">
+                    <h3 class="text-2xl font-bold mb-3">Yinelemeli Öz-Düzeltme</h3>
+                    <p class="text-gray-600">
+                        Modelin kendi çıktısını eleştirmesini, hatalarını tespit edip düzeltmesini sağlamak. SELF-REFINE ve ReEx gibi mekanizmalar bu süreci yönetir.
+                    </p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg border-t-4 border-rose-500">
+                    <h3 class="text-2xl font-bold mb-3">Uzman Kişilik</h3>
+                    <p class="text-gray-600">
+                        Modele belirli bir rol (örneğin "30 yıllık deneyime sahip bir uzman") atayarak yanıtların tonunu, üslubunu ve derinliğini istenen seviyeye çekmek.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section id="karsilastirma" class="my-16 scroll-mt-20">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-4">İnteraktif Strateji Karşılaştırması</h2>
+            <p class="text-center text-gray-700 max-w-2xl mx-auto mb-12">Grafiklerdeki çubuklara tıklayarak her bir tekniğin detaylı açıklamasını, faydalarını ve sınırlamalarını görebilirsiniz.</p>
+
+            <div class="grid md:grid-cols-2 gap-12 items-start">
+                <div>
+                    <h3 class="text-2xl font-bold text-center mb-4">Muhakeme Teknikleri</h3>
+                    <div class="chart-container">
+                        <canvas id="reasoningChart"></canvas>
+                    </div>
+                </div>
+                <div id="reasoningDetails" class="bg-white p-6 rounded-lg shadow-md min-h-[300px] mt-8 md:mt-0">
+                    <h4 class="text-xl font-bold mb-2 text-gray-800">Bir teknik seçin</h4>
+                    <p class="text-gray-600">Detayları görmek için yandaki grafikten bir muhakeme tekniği seçin.</p>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-12 items-start mt-16">
+                <div>
+                    <h3 class="text-2xl font-bold text-center mb-4">Doğruluk ve Düzeltme Stratejileri</h3>
+                    <div class="chart-container">
+                        <canvas id="accuracyChart"></canvas>
+                    </div>
+                </div>
+                <div id="accuracyDetails" class="bg-white p-6 rounded-lg shadow-md min-h-[300px] mt-8 md:mt-0">
+                    <h4 class="text-xl font-bold mb-2 text-gray-800">Bir strateji seçin</h4>
+                    <p class="text-gray-600">Detayları görmek için yandaki grafikten bir doğruluk stratejisi seçin.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="ana-komut" class="my-16 scroll-mt-20">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-4">Ana Komut Yapısı Taslağı</h2>
+            <p class="text-center text-gray-700 max-w-3xl mx-auto mb-12">
+                Tüm ilkeleri bir araya getiren, BGM'yi "Nobel jürisi" standardında yanıt vermeye yönlendiren modüler bir komut yapısı. Anahtar terimlerin üzerine gelerek kısa açıklamaları görebilirsiniz.
+            </p>
+            <div class="bg-gray-800 text-white p-6 rounded-lg shadow-2xl max-w-4xl mx-auto font-mono text-sm leading-relaxed">
+                <p><span class="text-purple-400">## 1. Sistem Kişiliği ve Temel Direktifler ##</span></p>
+                <p class="ml-4">- <strong class="text-green-400">Kişilik:</strong> "30+ yıllık deneyime sahip, literatüre hakim bir [Uzmanlık Alanı] uzmanı gibi davran."</p>
+                <p class="ml-4">- <strong class="text-green-400">Amaç:</strong> "Yanıtını, bir Nobel jürisine sunulacakmış gibi en yüksek bilimsel titizlikle hazırla."</p>
+                <p class="ml-4">- <strong class="text-green-400">Doğruluk Mandası:</strong> "Hata payı < %1 olmalı. Güvenin %99'un altındaysa, ek bilgi veya araştırma talep et."</p>
+                <p class="ml-4">- <strong class="text-green-400">Öz-Eleştiri Mandası:</strong> "Kendi cevabındaki potansiyel kusurları, zayıflıkları ve alternatif yorumları belirle."</p>
+                <br>
+                <p><span class="text-purple-400">## 2. Muhakeme ve Analiz Direktifleri ##</span></p>
+                <p class="ml-4">- <strong class="text-green-400">Yapı:</strong> "Karmaşık sorunları mantıksal adımlara ayır.
+                    <span class="tooltip">CoD<span class="tooltiptext">Düşünce Taslağı (Chain of Draft): Minimalist ama bilgilendirici ara muhakeme adımları üreterek verimliliği artırır.</span></span>
+                    ilkesiyle kısa ara çıktılar sağla."</p>
+                <p class="ml-4">- <strong class="text-green-400">Sorgulama:</strong> "Gerekirse, nihai yanıttan önce cevaplanması gereken alt soruları
+                    <span class="tooltip">Self-Ask<span class="tooltiptext">Kendi Kendine Sorma (Self-Ask): Karmaşık soruları alt sorulara bölerek modelin muhakemesini yapılandırır.</span></span>
+                    ilkesiyle listele."</p>
+                <br>
+                <p><span class="text-purple-400">## 3. Olgusal Temellendirme ve Araştırma ##</span></p>
+                <p class="ml-4">- <strong class="text-green-400">Araştırma:</strong> "Yanıtını formüle etmeden önce,
+                    <span class="tooltip">RAG<span class="tooltiptext">Geri Getirme Artırılmış Üretim (RAG): Yanıtları harici, güncel bilgi kaynaklarına dayandırarak doğruluğu artırır.</span></span>
+                    ile harici ve doğrulanabilir kaynaklardan bilgi al."</p>
+                <p class="ml-4">- <strong class="text-green-400">Alıntı:</strong> "Tüm harici kaynakları akademik standartlarda alıntıla."</p>
+                <br>
+                <p><span class="text-purple-400">## 4. Yinelemeli İyileştirme ve Düzeltme ##</span></p>
+                <p class="ml-4">- <strong class="text-green-400">Gözden Geçirme:</strong> "İlk taslağı oluşturduktan sonra,
+                    <span class="tooltip">SELF-REFINE<span class="tooltiptext">Kendi kendini iyileştirme: Modelin kendi çıktısını yinelemeli olarak eleştirip düzeltmesini sağlayan bir algoritma.</span></span>
+                    süreciyle çıktını hatalara karşı kontrol et."</p>
+                <p class="ml-4">- <strong class="text-green-400">Hata Düzeltme:</strong> "Olgusal bir hata bulursan,
+                    <span class="tooltip">ReEx<span class="tooltiptext">Açıklama Sonrası Düzeltme (ReEx): Hataları harici kanıtlarla açıklayıp sonra düzeltmeye dayalı bir metodoloji.</span></span>
+                    metodolojisini uygula: hatayı tanımla, kanıtla, nedenini açıkla ve düzelt."</p>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-800 text-white text-center p-6 mt-16">
+        <p>&copy; 2025 Gelişmiş Komut Mühendisliği İnteraktif Rehberi. Tüm hakları saklıdır.</p>
+        <p class="text-sm text-gray-400 mt-2">Bu uygulama, "Büyük Dil Modelleri için Gelişmiş Komut Mühendisliği" raporundan esinlenerek oluşturulmuştur.</p>
+    </footer>
+
+    <script>
+        const reasoningData = {
+            labels: ['Düşünce Zinciri (CoT)', 'Düşünce Taslağı (CoD)', 'Kendi Kendine Sorma (Self-Ask)', 'Yapılandırılmış Muhakeme'],
+            datasets: [{
+                label: 'Analitik Derinlik Puanı (Nitel)',
+                data: [85, 75, 90, 95],
+                backgroundColor: [
+                    'rgba(124, 157, 150, 0.7)',
+                    'rgba(224, 167, 94, 0.7)',
+                    'rgba(60, 54, 51, 0.7)',
+                    'rgba(200, 100, 100, 0.7)'
+                ],
+                borderColor: [
+                    '#7C9D96',
+                    '#E0A75E',
+                    '#3C3633',
+                    '#C86464'
+                ],
+                borderWidth: 1
+            }]
+        };
+
+        const accuracyData = {
+            labels: ['RAG', 'SELF-REFINE', 'Açıklama Sonrası Düzeltme (ReEx)'],
+            datasets: [{
+                label: 'Hata Azaltma Etkinliği (Nitel)',
+                data: [95, 80, 90],
+                backgroundColor: [
+                    'rgba(124, 157, 150, 0.7)',
+                    'rgba(224, 167, 94, 0.7)',
+                    'rgba(60, 54, 51, 0.7)'
+                ],
+                borderColor: [
+                    '#7C9D96',
+                    '#E0A75E',
+                    '#3C3633'
+                ],
+                borderWidth: 1
+            }]
+        };
+
+        const reasoningDetailsData = [
+            {
+                title: 'Düşünce Zinciri (Chain-of-Thought - CoT)',
+                description: 'Modelin karmaşık bir sorunu çözmek için attığı ara adımları açıkça ifade etmesini teşvik eden bir tekniktir. Bu, sonuca nasıl ulaşıldığını şeffaf hale getirir.',
+                benefits: 'Analitik derinliği ve karmaşık görevlerdeki muhakeme yeteneğini artırır.',
+                limitations: 'Yüksek belirteç (token) kullanımı ve gecikmeye neden olabilir. Basit kullanımı bazen yetersiz kalabilir.'
+            },
+            {
+                title: 'Düşünce Taslağı (Chain-of-Draft - CoD)',
+                description: 'Modelin, tam bir muhakeme zinciri yerine, minimalist ancak bilgi yoğun ara taslaklar oluşturmasını sağlar. İnsan bilişsel süreçlerinden ilham alır.',
+                benefits: 'Standart CoT\'ye kıyasla doğruluktan ödün vermeden gecikmeyi ve hesaplama maliyetini azaltır.',
+                limitations: 'Her görev türü için uygun olmayabilir; minimalist çıktının yeterli bilgi sağlaması gerekir.'
+            },
+            {
+                title: 'Kendi Kendine Sorma (Self-Ask)',
+                description: 'Karmaşık bir soruyu, modelin kendi kendine sorduğu ve cevapladığı daha küçük alt sorulara bölerek muhakemeyi geliştirir.',
+                benefits: 'Derinlemesine analiz sağlar ve muhakeme adımlarını son derece şeffaf hale getirir. Özellikle araştırma gerektiren görevlerde etkilidir.',
+                limitations: 'Ek etkileşim adımları ve daha fazla yönlendirme gerektirebilir.'
+            },
+            {
+                title: 'Yapılandırılmış Muhakeme (Nöro-sembolik Entegrasyon)',
+                description: 'Sinir ağlarının esnekliği ile sembolik mantığın (kuralların) hassasiyetini birleştirir. Özellikle kural tabanlı görevlerde doğruluğu artırmayı hedefler.',
+                benefits: 'Yüksek doğruluk, yorumlanabilirlik ve sağlamlık sağlar. Halüsinasyonları azaltır.',
+                limitations: 'Uygulaması karmaşıktır ve belirli model yeteneklerine bağlı olabilir.'
+            }
+        ];
+
+        const accuracyDetailsData = [
+            {
+                title: 'Geri Getirme Artırılmış Üretim (RAG)',
+                description: 'Modelin yanıtlarını üretmeden önce harici ve güncel bilgi kaynaklarından (veritabanları, web) ilgili bilgileri çekmesini ve kullanmasını sağlayan bir yöntemdir.',
+                benefits: 'Halüsinasyonları önemli ölçüde azaltır, yanıtları doğrulanabilir kanıtlara dayandırır ve modele alana özgü bilgi sağlar.',
+                limitations: 'Performansı, getirilen bilginin kalitesine ve uygunluğuna doğrudan bağlıdır. Bağlam yönetimi zorlayıcı olabilir.'
+            },
+            {
+                title: 'Kendi Kendini İyileştirme (SELF-REFINE)',
+                description: 'Modelin, ürettiği ilk çıktıyı yinelemeli olarak eleştirip, aldığı geri bildirimlere göre düzeltmesini sağlayan bir algoritmadır.',
+                benefits: 'Ek eğitim gerektirmez, çıktı kalitesini önemli ölçüde artırır ve modelin kendi hatalarını fark etme yeteneğini geliştirir.',
+                limitations: 'Her yineleme adımı belirteç kullanımını ve gecikmeyi artırır.'
+            },
+            {
+                title: 'Açıklama Sonrası Düzeltme (ReEx)',
+                description: 'Olgusal hataları düzeltmek için üç adımlı bir süreç: 1) Harici araçlarla kanıt topla. 2) Kanıtlara dayanarak hatanın nedenini açıkla. 3) Açıklamayı kullanarak yanıtı düzelt.',
+                benefits: 'Hata tespitinde çok etkilidir. Düzeltme sürecini şeffaf hale getirir ve modelin hatayı "anlamasını" teşvik eder.',
+                limitations: 'Harici araçlara (örn. arama motoru API) bağımlılık gerektirir ve uygulama karmaşıklığı daha yüksektir.'
+            }
+        ];
+
+        function createChart(ctx, type, data, detailsData, detailsElementId) {
+            const detailsElement = document.getElementById(detailsElementId);
+            return new Chart(ctx, {
+                type: type,
+                data: data,
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        y: {
+                             grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            enabled: true
+                        }
+                    },
+                    onClick: (event, elements) => {
+                        if (elements.length > 0) {
+                            const index = elements[0].index;
+                            const detail = detailsData[index];
+                            detailsElement.innerHTML = `
+                                <h4 class="text-xl font-bold mb-2 text-gray-800">${detail.title}</h4>
+                                <p class="text-gray-600 mb-4">${detail.description}</p>
+                                <div class="border-t pt-4">
+                                    <p class="font-bold text-green-700">Faydaları:</p>
+                                    <p class="text-gray-600 mb-2">${detail.benefits}</p>
+                                    <p class="font-bold text-red-700">Sınırlamaları:</p>
+                                    <p class="text-gray-600">${detail.limitations}</p>
+                                </div>
+                            `;
+                        }
+                    }
+                }
+            });
+        }
+
+        window.onload = function() {
+            const reasoningCtx = document.getElementById('reasoningChart').getContext('2d');
+            createChart(reasoningCtx, 'bar', reasoningData, reasoningDetailsData, 'reasoningDetails');
+
+            const accuracyCtx = document.getElementById('accuracyChart').getContext('2d');
+            createChart(accuracyCtx, 'bar', accuracyData, accuracyDetailsData, 'accuracyDetails');
+        };
+    </script>
+</body>
+</html>
